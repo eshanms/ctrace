@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ctrace - Carbon Dashboard</title>
+    <!-- Tailwind CSS for sleek styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* Modern dashboard-level interface animations */
+        .dashboard-screen {
+            animation: transitionReveal 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes transitionReveal {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Premium custom range sliders styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            border-radius: 999px;
+            background: #E2E8F0;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            background: #10B981;
+            border: 4px solid #FFFFFF;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.1s ease-in-out;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body class="bg-[#F4F7F5] text-[#1E2E1F] font-sans antialiased">
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="bg-white border-b border-[#E2E8F0] sticky top-0 z-50 px-8 py-4 flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="bg-[#10B981] p-2 rounded-xl text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M14 12a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            </div>
+            <span class="font-bold text-2xl tracking-tight text-[#1E2E1F]">C<span class="text-[#10B981]">trace</span></span>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="flex gap-2 bg-[#F1F5F9] p-1.5 rounded-xl">
+            <button onclick="switchTab('understand')" id="tab-understand" class="nav-tab px-6 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 bg-[#10B981] text-white transition-all duration-200">
+                Understand
+            </button>
+            <button onclick="switchTab('track')" id="tab-track" class="nav-tab px-6 py-2.5 rounded-lg text-sm font-medium text-[#64748B] hover:text-[#1E2E1F] flex items-center gap-2 transition-all duration-200">
+                Track Footprint
+            </button>
+            <button onclick="switchTab('results')" id="tab-results" class="nav-tab px-6 py-2.5 rounded-lg text-sm font-medium text-[#64748B] hover:text-[#1E2E1F] flex items-center gap-2 transition-all duration-200">
+                Results & Actions
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN DASHBOARD CONTENT AREA -->
+    <main class="max-w-7xl mx-auto p-8">
+
+        <!-- SCREEN 1: UNDERSTANDING -->
+        <section id="screen-understand" class="dashboard-screen space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#064E3B] to-[#047857] p-12 text-white shadow-xl">
+                <div class="max-w-2xl space-y-4 relative z-10">
+                    <h1 class="text-4xl font-extrabold tracking-tight md:text-5xl">Understanding Your Carbon Footprint</h1>
+                    <p class="text-[#D1FAE5] text-lg leading-relaxed">Knowledge is the first step towards meaningful action. Learn how your daily choices impact our planet and discover the power you hold to make a difference.</p>
+                </div>
+            </div>
+
+            <!-- Subtopic Grid Selector -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <button onclick="showTopic('definition')" id="btn-topic-definition" class="topic-card bg-[#10B981] text-white p-6 rounded-2xl text-left border border-transparent shadow-sm flex flex-col justify-between h-40 transition-all duration-200">
+                    <span class="font-bold text-lg">What is Carbon Footprint?</span>
+                </button>
+                <button onclick="showTopic('creation')" id="btn-topic-creation" class="topic-card bg-white text-[#1E2E1F] p-6 rounded-2xl text-left border border-[#E2E8F0] shadow-sm flex flex-col justify-between h-40 transition-all duration-200 hover:border-[#10B981]">
+                    <span class="font-bold text-lg">How We Create It</span>
+                </button>
+                <button onclick="showTopic('impact')" id="btn-topic-impact" class="topic-card bg-white text-[#1E2E1F] p-6 rounded-2xl text-left border border-[#E2E8F0] shadow-sm flex flex-col justify-between h-40 transition-all duration-200 hover:border-[#10B981]">
+                    <span class="font-bold text-lg">Why It Matters</span>
+                </button>
+                <button onclick="showTopic('change')" id="btn-topic-change" class="topic-card bg-white text-[#1E2E1F] p-6 rounded-2xl text-left border border-[#E2E8F0] shadow-sm flex flex-col justify-between h-40 transition-all duration-200 hover:border-[#10B981]">
+                    <span class="font-bold text-lg">Your Role in Change</span>
+                </button>
+            </div>
+
+            <!-- Context Dynamic Display Area -->
+            <div id="topic-content-box" class="bg-white rounded-3xl p-8 border border-[#E2E8F0] shadow-sm min-h-[200px]">
+                <div class="space-y-4">
+                    <h3 class="text-2xl font-bold text-[#064E3B]">What is a Carbon Footprint?</h3>
+                    <p class="text-[#475569] leading-relaxed text-base">Your carbon footprint is the total amount of greenhouse gases (including carbon dioxide and methane) that are generated by our actions. Globally, the average carbon footprint is close to 4 tons per person annually. To avoid global temperature crises, we need to bring this down under 2 tons by 2030.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: TRACKING SYSTEM -->
+        <section id="screen-track" class="dashboard-screen hidden space-y-6">
+            <div class="border-b border-[#E2E8F0] pb-4">
+                <h2 class="text-3xl font-extrabold tracking-tight text-[#064E3B]">Interactive Calculator</h2>
+                <p class="text-[#64748B] mt-1">Provide your approximate routines to measure your greenhouse output indicators.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Input Panel Slider Form Stack -->
+                <div class="lg:col-span-2 bg-white rounded-3xl p-8 border border-[#E2E8F0] shadow-sm space-y-8">
+                    <!-- Transport -->
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <label class="font-bold text-base flex items-center gap-2 text-[#064E3B]">Weekly Commuting Distance</label>
+                            <span id="label-transport" class="px-3 py-1 bg-[#E1FCEF] text-[#047857] text-sm font-bold rounded-lg">50 km</span>
+                        </div>
+                        <input type="range" id="slider-transport" min="0" max="400" value="50" class="w-full accent-[#10B981]">
+                    </div>
+
+                    <!-- Diet -->
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <label class="font-bold text-base flex items-center gap-2 text-[#064E3B]">Meat-Inclusive Meals Per Week</label>
+                            <span id="label-diet" class="px-3 py-1 bg-[#E1FCEF] text-[#047857] text-sm font-bold rounded-lg">7 meals</span>
+                        </div>
+                        <input type="range" id="slider-diet" min="0" max="21" value="7" class="w-full accent-[#10B981]">
+                    </div>
+
+                    <!-- Energy -->
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <label class="font-bold text-base flex items-center gap-2 text-[#064E3B]">Monthly Electric Grid Consumption</label>
+                            <span id="label-energy" class="px-3 py-1 bg-[#E1FCEF] text-[#047857] text-sm font-bold rounded-lg">200 kWh</span>
+                        </div>
+                        <input type="range" id="slider-energy" min="20" max="800" value="200" class="w-full accent-[#10B981]">
+                    </div>
+
+                    <button onclick="calculateFootprint()" class="w-full bg-[#10B981] hover:bg-[#059669] text-white py-4 rounded-2xl font-bold tracking-wide shadow-md transition-all duration-150 flex items-center justify-center gap-2 text-base">
+                        Analyze System Metrics
+                    </button>
+                </div>
+
+                <!-- Info Side Helper Widget Block -->
+                <div class="bg-[#064E3B] text-white rounded-3xl p-8 flex flex-col justify-between shadow-lg">
+                    <div class="space-y-4">
+                        <h4 class="text-xl font-bold">Why metrics matter</h4>
+                        <p class="text-[#A7F3D0] text-sm leading-relaxed">The tracking metrics correspond directly with verified greenhouse evaluation baselines. The calculations process emissions from transport fuel lifecycles, dietary agriculture generation profiles, and raw grid utility burn offsets.</p>
+                    </div>
+                    <div class="border-t border-[#047857] pt-6 mt-6">
+                        <span class="text-xs uppercase text-[#A7F3D0] font-bold tracking-widest block mb-1">Global Standard Target</span>
+                        <p class="text-2xl font-black text-white">2.0 <span class="text-sm font-normal text-[#A7F3D0]">Tonnes / Year</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: RESULTS & VISUAL RECOMMENDATIONS -->
+        <section id="screen-results" class="dashboard-screen hidden space-y-8">
+            <div class="border-b border-[#E2E8F0] pb-4">
+                <h2 class="text-3xl font-extrabold tracking-tight text-[#064E3B]">Performance & Actions</h2>
+                <p class="text-[#64748B] mt-1">Visual footprint diagnostic values alongside targeted lifestyle adaptation proposals.</p>
+            </div>
+
+            <!-- Dashboard Analytics Layout Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Circular Metric Ring Widget -->
+                <div class="bg-white rounded-3xl p-8 border border-[#E2E8F0] shadow-sm flex flex-col items-center justify-center text-center space-y-6">
+                    <h4 class="font-bold text-lg text-[#064E3B]">Aggregate Output</h4>
+                    
+                    <div class="relative w-44 h-44 flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="40" stroke="#F1F5F9" stroke-width="8" fill="transparent" />
+                            <circle id="gauge-progress" cx="50" cy="50" r="40" stroke="#10B981" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round" class="transition-all duration-1000 ease-out" />
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="gauge-value" class="text-4xl font-black text-[#1E2E1F]">0.00</span>
+                            <span class="text-xs font-semibold text-[#64748B] uppercase tracking-wider">Tons / Yr</span>
+                        </div>
+                    </div>
+
+                    <div id="badge-container" class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#F1F5F9] text-[#64748B]">
+                        Awaiting Inputs
+                    </div>
+                </div>
+
+                <!-- Progress Bar Component Panel -->
+                <div class="md:col-span-2 bg-white rounded-3xl p-8 border border-[#E2E8F0] shadow-sm space-y-6">
+                    <h4 class="font-bold text-lg text-[#064E3B]">Footprint Categorization Segment Breakdown</h4>
+                    
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm font-medium">
+                                <span>Transit Burn Factor</span>
+                                <span id="breakdown-transport" class="font-bold">0.00 Tons</span>
+                            </div>
+                            <div class="w-full bg-[#F1F5F9] h-3 rounded-full overflow-hidden">
+                                <div id="bar-transport" class="bg-blue-500 h-full w-0 transition-all duration-700 ease-out"></div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm font-medium">
+                                <span>Dietary Lifecycle Load</span>
+                                <span id="breakdown-diet" class="font-bold">0.00 Tons</span>
+                            </div>
+                            <div class="w-full bg-[#F1F5F9] h-3 rounded-full overflow-hidden">
+                                <div id="bar-diet" class="bg-amber-500 h-full w-0 transition-all duration-700 ease-out"></div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm font-medium">
+                                <span>Grid Power Allocation</span>
+                                <span id="breakdown-energy" class="font-bold">0.00 Tons</span>
+                            </div>
+                            <div class="w-full bg-[#F1F5F9] h-3 rounded-full overflow-hidden">
+                                <div id="bar-energy" class="bg-red-500 h-full w-0 transition-all duration-700 ease-out"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interventions Deck -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-[#064E3B]">Tailored Structural Interventions</h3>
+                <div id="suggestions-deck" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2 p-8 bg-white border border-[#E2E8F0] rounded-3xl text-center text-sm text-[#64748B]">
+                        Run metric parameters inside the <span class="font-bold text-[#10B981] underline cursor-pointer" onclick="switchTab('track')">Track Footprint</span> workspace to see action suggestions.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- CORE FUNCTIONAL SCRIPT LOGIC -->
+    <script>
+        const KNOWLEDGE_BASE = {
+            definition: {
+                title: "What is a Carbon Footprint?",
+                body: "Your carbon footprint is the total volume of greenhouse gas atmospheric pollution artifacts generated by routine individual or commercial lifestyle pipelines. This parameter monitors immediate fuel combustion metrics paired alongside deeply woven secondary infrastructure supply chain carbon allocations."
+            },
+            creation: {
+                title: "How We Create It",
+                body: "Every single consumer logistics loop updates your footprint. Common examples include private vehicle fossil consumption, processing red meat variants that yield significant methane outputs, and managing structural domestic appliances left connected to municipal energy grid meshes indefinitely."
+            },
+            impact: {
+                title: "Why It Matters",
+                body: "Excessively heavy greenhouse blankets raise average temperatures worldwide, triggering catastrophic climate feedback systems. Restricting your specific structural emission indexes minimizes ecological system volatility over critical decades ahead."
+            },
+            change: {
+                title: "Your Role in Change",
+                body: "Shifting routine actions downwards completely alters operational manufacturing and distribution demand curves. Adopting alternative transit loops, minor power usage changes, and dietary balance modifications structures immediate macro-level positive environmental adaptations."
+            }
+        };
+
+        function switchTab(targetId) {
+            document.querySelectorAll(".dashboard-screen").forEach(screen => screen.classList.add("hidden"));
+            document.getElementById(`screen-${targetId}`).classList.remove("hidden");
+
+            document.querySelectorAll(".nav-tab").forEach(tab => {
+                tab.classList.remove("bg-[#10B981]", "text-white", "shadow-sm");
+                tab.classList.add("text-[#64748B]");
+            });
+
+            const activeTab = document.getElementById(`tab-${targetId}`);
+            activeTab.classList.add("bg-[#10B981]", "text-white", "shadow-sm");
+            activeTab.classList.remove("text-[#64748B]");
+        }
+
+        function showTopic(topicKey) {
+            document.querySelectorAll(".topic-card").forEach(card => {
+                card.classList.remove("bg-[#10B981]", "text-white");
+                card.classList.add("bg-white", "text-[#1E2E1F]", "border-[#E2E8F0]");
+            });
+
+            const targetCard = document.getElementById(`btn-topic-${topicKey}`);
+            targetCard.classList.add("bg-[#10B981]", "text-white");
+            targetCard.classList.remove("bg-white", "text-[#1E2E1F]", "border-[#E2E8F0]");
+
+            document.getElementById("topic-content-box").innerHTML = `
+                <div class="space-y-4">
+                    <h3 class="text-2xl font-bold text-[#064E3B]">${KNOWLEDGE_BASE[topicKey].title}</h3>
+                    <p class="text-[#475569] leading-relaxed text-base">${KNOWLEDGE_BASE[topicKey].body}</p>
+                </div>
+            `;
+        }
+
+        function setupRealtimeSync() {
+            const inputs = [
+                { id: 'transport', unit: ' km' },
+                { id: 'diet', unit: ' meals' },
+                { id: 'energy', unit: ' kWh' }
+            ];
+            inputs.forEach(item => {
+                const component = document.getElementById(`slider-${item.id}`);
+                const textElement = document.getElementById(`label-${item.id}`);
+                component.addEventListener("input", (e) => {
+                    textElement.textContent = e.target.value + item.unit;
+                });
+            });
+        }
+        setupRealtimeSync();
+
+        function calculateFootprint() {
+            const transportVal = parseFloat(document.getElementById("slider-transport").value);
+            const dietVal = parseFloat(document.getElementById("slider-diet").value);
+            const energyVal = parseFloat(document.getElementById("slider-energy").value);
+
+            const transportCalc = (transportVal * 52 * 0.18) / 1000; 
+            const dietCalc = (dietVal * 52 * 2.9) / 1000;         
+            const energyCalc = (energyVal * 12 * 0.92) / 1000;     
+
+            const collectiveAggregate = transportCalc + dietCalc + energyCalc;
+
+            document.getElementById("gauge-value").textContent = collectiveAggregate.toFixed(2);
+            
+            const maxReferenceBounds = 12.0; 
+            const fractionalPercentage = Math.min((collectiveAggregate / maxReferenceBounds), 1);
+            const targetOffsetValue = 251.2 - (251.2 * fractionalPercentage);
+            document.getElementById("gauge-progress").style.strokeDashoffset = targetOffsetValue;
+
+            document.getElementById("breakdown-transport").textContent = `${transportCalc.toFixed(2)} Tons`;
+            document.getElementById("breakdown-diet").textContent = `${dietCalc.toFixed(2)} Tons`;
+            document.getElementById("breakdown-energy").textContent = `${energyCalc.toFixed(2)} Tons`;
+
+            document.getElementById("bar-transport").style.width = `${Math.min((transportCalc / 4) * 100, 100)}%`;
+            document.getElementById("bar-diet").style.width = `${Math.min((dietCalc / 4) * 100, 100)}%`;
+            document.getElementById("bar-energy").style.width = `${Math.min((energyCalc / 4) * 100, 100)}%`;
+
+            const badge = document.getElementById("badge-container");
+            if(collectiveAggregate <= 2.2) {
+                badge.textContent = "Eco Efficient";
+                badge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-[#E1FCEF] text-[#047857]";
+            } else if (collectiveAggregate <= 5.5) {
+                badge.textContent = "Moderate Output";
+                badge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-[#FEF3C7] text-[#92400E]";
+            } else {
+                badge.textContent = "High Intensity Profile";
+                badge.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-[#FEE2E2] text-[#991B1B]";
+            }
+
+            compileInterventions(transportVal, dietVal, energyVal);
+            switchTab('results');
+        }
+
+        function compileInterventions(trans, diet, power) {
+            const deck = document.getElementById("suggestions-deck");
+            deck.innerHTML = ""; 
+
+            let templates = [];
+            if(trans > 60) {
+                templates.push({
+                    title: "Transition Transit Routines",
+                    body: `Your weekly commute logs substantial transit burn factors. Swapping structural transit profiles over to standard electric choices or mass networks 2 days out of your routine offsets roughly ${Math.round(trans * 0.4 * 52)} kg of atmospheric load annually.`
+                });
+            }
+            if(diet > 5) {
+                templates.push({
+                    title: "Introduce Balanced Plant Alternatives",
+                    body: "Your menu profile registers sustained meat agricultural usage metrics. Adjusting cooking selections downward by 3 intervals across standard calendar weeks immediately stabilizes operational cultivation greenhouse demands."
+                });
+            }
+            if(power > 180) {
+                templates.push({
+                    title: "Remediate Structural Energy Loads",
+                    body: "Domestic utility parameters indicate significant operational energy drains. Setting automated consumption cuts on active environmental climate control systems checks baseline demand footprints effectively."
+                });
+            }
+            templates.push({
+                title: "Curate Zero Packaging Selections",
+                body: "Prioritize secondary consumer item selections designed without excessive synthetic logistics plastic layers to remove upstream distribution manufacturing impacts."
+            });
+
+            templates.forEach(item => {
+                const cardNode = document.createElement("div");
+                cardNode.className = "p-6 bg-white border border-[#E2E8F0] rounded-3xl shadow-sm space-y-2";
+                cardNode.innerHTML = `
+                    <h5 class="font-bold text-lg text-[#064E3B]">${item.title}</h5>
+                    <p class="text-sm text-[#475569] leading-relaxed">${item.body}</p>
+                `;
+                deck.appendChild(cardNode);
+            });
+        }
+    </script>
+</body>
+</html>
